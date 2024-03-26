@@ -48,7 +48,7 @@ router.post('/', tokenExtractor, async (req, res) => {
     })
     return res.json(note)
   } catch(error) {
-    return res.status(400).json({ error })
+    return res.status(400).json({ error: 'Something wrong with adding a new note!' })
   }
 })
 
