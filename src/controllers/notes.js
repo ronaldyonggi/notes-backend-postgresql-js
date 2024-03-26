@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { Note } = require('../models')
+const { Note, User } = require('../models')
 
 // Middleware for finding a specific note
 const noteFinder = async (req, res, next) => {
@@ -23,7 +23,11 @@ router.get('/:id', noteFinder, async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const note = await Note.create(req.body)
+    const user = await User.findOne()
+    const note = await Note.create({
+      ...req.body,
+      userId: user.id
+    })
     return res.json(note)
   } catch(error) {
     return res.status(400).json({ error })
