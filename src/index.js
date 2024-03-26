@@ -1,3 +1,4 @@
+const cors = require('cors')
 const express = require('express')
 const app = express()
 
@@ -7,6 +8,7 @@ const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const { PORT } = require('./utils/config')
 
+app.use(cors())
 app.use(express.json())
 
 app.use('/api/notes', notesRouter)
