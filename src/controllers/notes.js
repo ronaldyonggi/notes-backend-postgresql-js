@@ -40,10 +40,11 @@ router.get('/:id', noteFinder, async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const user = await User.findOne()
+    const user = await User.findByPk(req.decodedToken.id)
     const note = await Note.create({
       ...req.body,
-      userId: user.id
+      userId: user.id,
+      date: new Date()
     })
     return res.json(note)
   } catch(error) {
