@@ -1,26 +1,9 @@
 const router = require('express').Router()
 const { Note, User } = require('../models')
-const jwt = require('jsonwebtoken')
-const { SECRET } = require('../utils/config')
 
 // Middleware for finding a specific note
 const noteFinder = async (req, res, next) => {
   req.note = await Note.findByPk(req.params.id)
-  next()
-}
-
-// Middleware for tokens
-const tokenExtractor = (req, res, next) => {
-  const authorization = req.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    try {
-      req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
-    } catch {
-      return res.status(401).json({ error: 'token invalid ' })
-    }
-  } else {
-    return res.status(401).json({ error: 'token missing' })
-  }
   next()
 }
 
@@ -44,12 +27,15 @@ router.get('/:id', noteFinder, async (req, res) => {
   }
 })
 
-router.post('/', tokenExtractor, async (req, res) => {
+router.post('/', async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'user not found' })
+  }
+
   try {
-    const user = await User.findByPk(req.decodedToken.id)
     const note = await Note.create({
       ...req.body,
-      userId: user.id,
+      userId: req.user.id,
       date: new Date()
     })
     return res.json(note)
