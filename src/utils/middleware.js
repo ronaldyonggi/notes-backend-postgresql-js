@@ -1,29 +1,29 @@
-const jwt = require('jsonwebtoken')
-const { SECRET } = require('../utils/config')
-const { User } = require('../models')
+const jwt = require('jsonwebtoken');
+const { SECRET } = require('../utils/config');
+const { User } = require('../models');
 
 // Middleware for tokens
 const tokenExtractor = (req, res, next) => {
-  const authorization = req.get('authorization')
+  const authorization = req.get('authorization');
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
+    req.decodedToken = jwt.verify(authorization.substring(7), SECRET);
   }
 
-  next()
-}
+  next();
+};
 
 const userExtractor = async (req, res, next) => {
   if (req.decodedToken) {
-    const user = await User.findByPk(req.decodedToken.id)
+    const user = await User.findByPk(req.decodedToken.id);
     if (user) {
-      req.user = user
+      req.user = user;
     }
   }
 
-  next()
-}
+  next();
+};
 
 module.exports = {
   tokenExtractor,
-  userExtractor
-}
+  userExtractor,
+};
