@@ -17,7 +17,8 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.5",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "umzug": "^3.8.0"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-js": "^1.7.2",
