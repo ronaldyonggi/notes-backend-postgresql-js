@@ -2,6 +2,15 @@ const router = require('express').Router();
 
 const { User, Note } = require('../models');
 
+const isAdmin = async (req, res, next) => {
+  const user = await User.findByPk(req.decoded.id);
+  if (!user.admin) {
+    return res.status(401).json({ error: 'operation not allowed' });
+  }
+
+  next();
+};
+
 router.get('/', async (req, res) => {
   const users = await User.findAll({
     include: {
