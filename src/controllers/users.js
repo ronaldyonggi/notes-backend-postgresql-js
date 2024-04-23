@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const middleware = require('../utils/middleware');
 
 const { User, Note } = require('../models');
 
@@ -38,5 +39,27 @@ router.get('/:id', async (req, res) => {
     res.status(404).end();
   }
 });
+
+// Change the status of a user's account. This endpoint can only be used by admins
+router.put(
+  '/:username',
+  middleware.tokenExtractor,
+  isAdmin,
+  async (req, res) => {
+    const user = await User.findOne({
+      where: {
+        username: req.params.username,
+      },
+    });
+
+    if (user) {
+      user.disabled = req.body.disabled;
+      await user.save();
+      res.json(user);
+    } else {
+      res.status(404).end();
+    }
+  }
+);
 
 module.exports = router;
