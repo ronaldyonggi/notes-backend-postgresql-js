@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { Op } = require('sequelize');
 const { Note, User } = require('../models');
-const middleware = require('../utils/middleware');
+// const middleware = require('../utils/middleware');
 
 // Middleware for finding a specific note
 const noteFinder = async (req, res, next) => {
@@ -55,7 +55,7 @@ router.get('/:id', noteFinder, async (req, res) => {
   }
 });
 
-router.post('/', middleware.tokenExtractor, async (req, res) => {
+router.post('/', async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ error: 'user not found' });
   }
