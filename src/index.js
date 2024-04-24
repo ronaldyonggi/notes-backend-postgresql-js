@@ -11,7 +11,6 @@ const middleware = require('./utils/middleware');
 
 app.use(cors());
 app.use(express.json());
-app.use(middleware.tokenExtractor);
 
 app.use('/api/notes', middleware.userExtractor, notesRouter);
 app.use('/api/users', usersRouter);
