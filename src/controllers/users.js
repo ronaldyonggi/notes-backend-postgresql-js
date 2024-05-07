@@ -14,6 +14,27 @@ const isAdmin = async (req, res, next) => {
 
 // GET all users
 router.get('/', async (req, res) => {
+  // GET admins only
+  if (req.query.admin === 'true') {
+    const adminUsers = await User.scope('admin').findAll();
+    return res.json(adminUsers);
+  }
+
+  // GET all disabled users only
+  if (req.query.disabled === 'true') {
+    const disabledUsers = await User.scope('disabled').findAll();
+    return res.json(disabledUsers);
+  }
+
+  // GET all users whose name contain the string specified
+  if (req.query.name) {
+    const nameQuery = req.query.name;
+    const filteredByName = await User.scope({
+      method: ['name', `%${nameQuery}%`],
+    }).findAll();
+    return res.json(filteredByName);
+  }
+
   const users = await User.findAll({
     include: [
       {
