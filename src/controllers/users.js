@@ -31,6 +31,7 @@ router.get('/', async (req, res) => {
   res.json(users);
 });
 
+// CREATE a user
 router.post('/', async (req, res) => {
   try {
     const user = await User.create(req.body);
@@ -40,6 +41,7 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET a specific user
 router.get('/:id', async (req, res) => {
   const user = await User.findByPk(req.params.id, {
     attributes: { exclude: [''] },
