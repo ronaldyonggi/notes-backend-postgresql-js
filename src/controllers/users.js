@@ -12,6 +12,7 @@ const isAdmin = async (req, res, next) => {
   next();
 };
 
+// GET all users
 router.get('/', async (req, res) => {
   const users = await User.findAll({
     include: [
@@ -62,27 +63,32 @@ router.get('/:id', async (req, res) => {
           attributes: ['name'],
         },
       },
-      {
-        model: Team,
-        attributes: ['name', 'id'],
-        through: {
-          attributes: [],
-        },
-      },
+      // {
+      //   model: Team,
+      //   attributes: ['name', 'id'],
+      //   through: {
+      //     attributes: [],
+      //   },
+      // },
     ],
   });
 
-  if (user) {
-    // const objectToBeReturned = {
-    //   username: user.username,
-    //   name: user.name,
-    //   note_count: user.notes.length,
-    // };
-
-    res.json(user);
-  } else {
-    res.status(404).end();
+  if (!user) {
+    return res.status(404).json({ error: 'user not found!' });
   }
+
+  let teams = undefined;
+  if (req.query.teams) {
+    teams = await user.getTeams({
+      attributes: ['name'],
+      joinTableAttributes: [],
+    });
+  }
+
+  res.json({
+    ...user.toJSON(),
+    teams,
+  });
 });
 
 // Change the status of a user's account. This endpoint can only be used by admins
