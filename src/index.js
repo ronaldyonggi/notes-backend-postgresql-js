@@ -6,6 +6,7 @@ const { connectToDatabase } = require('./utils/db');
 const notesRouter = require('./controllers/notes');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
+const logoutRouter = require('./controllers/logout');
 const { PORT } = require('./utils/config');
 const middleware = require('./utils/middleware');
 
@@ -16,6 +17,7 @@ app.use(middleware.tokenExtractor);
 app.use('/api/notes', middleware.userExtractor, notesRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
+app.use('/api/logout', middleware.userExtractor, logoutRouter);
 
 const start = async () => {
   await connectToDatabase();
