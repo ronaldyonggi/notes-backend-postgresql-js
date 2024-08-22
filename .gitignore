@@ -18,3 +18,4 @@ TODOs.md
 .eslintcache
 /request
 .env
+/redis_data
