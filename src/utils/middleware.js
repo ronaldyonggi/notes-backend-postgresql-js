@@ -1,13 +1,20 @@
 const jwt = require('jsonwebtoken');
 const { SECRET } = require('../utils/config');
 const { User } = require('../models');
+const { getAsync } = require('./redis');
 
 // Middleware for tokens
-const tokenExtractor = (req, res, next) => {
+const tokenExtractor = async (req, res, next) => {
   const authorization = req.get('authorization');
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     try {
-      req.decodedToken = jwt.verify(authorization.substring(7), SECRET);
+      const tokenBeforeDecoded = authorization.substring(7); // fetch the token part after 'bearer '
+      // fetch the user id associated with the token from redis
+      const userIdInRedis = await getAsync(String(tokenBeforeDecoded));
+      // If token exists in redis, proceed
+      if (userIdInRedis) {
+        req.decodedToken = jwt.verify(tokenBeforeDecoded, SECRET);
+      }
     } catch {
       return res.status(401).json({ error: 'token invalid' });
     }
