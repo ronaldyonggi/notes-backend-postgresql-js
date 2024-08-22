@@ -3,6 +3,7 @@ const router = require('express').Router();
 
 const { SECRET } = require('../utils/config');
 const User = require('../models/user');
+const { setAsync } = require('../utils/redis');
 
 router.post('/', async (req, res) => {
   const body = req.body;
@@ -33,6 +34,10 @@ router.post('/', async (req, res) => {
   };
 
   const token = jwt.sign(userForToken, SECRET);
+
+  // Store token as active sessions to redis
+  setAsync(String(token), String(user.id));
+  setAsync(String(user.id), String(token));
 
   res.status(200).send({
     token,
